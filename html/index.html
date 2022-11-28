@@ -1,0 +1,8 @@
+<html contenteditable="true" autofocus></html>
+<script>
+	const a = localStorage.getItem("saved-content");
+	document.querySelector("body").innerHTML = a;
+	setInterval(() => {
+		localStorage.setItem("saved-content", document.querySelector("body").innerHTML);
+	}, 2000);
+</script>
