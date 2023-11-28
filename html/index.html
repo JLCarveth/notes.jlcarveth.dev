@@ -30,6 +30,10 @@
 		  e.preventDefault();
 		  document.execCommand('bold');
 		}
+                if (e.ctrlKey && e.key == 'i') {
+                  e.preventDefault();
+                  document.execCommand('italic');
+                }
 	});
 </script>
 
