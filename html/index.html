@@ -1,8 +1,39 @@
-<html contenteditable="true" autofocus></html>
+<html contenteditable="true" autofocus>
+  <style>
+    html {
+      font-family: "Courier New"
+    }
+  </style>
+</html>
 <script>
 	const a = localStorage.getItem("saved-content");
 	document.querySelector("body").innerHTML = a;
 	setInterval(() => {
 		localStorage.setItem("saved-content", document.querySelector("body").innerHTML);
 	}, 2000);
+
+	document.querySelector('html').addEventListener('keydown', function(e) {
+		if (e.keyCode === 9) { // check if 'Tab' was pressed
+			e.preventDefault(); // prevent the default action
+			// create a text node with four spaces
+			var textNode = document.createTextNode('\u00a0\u00a0\u00a0\u00a0');
+			var selection = window.getSelection();
+			var range = selection.getRangeAt(0);
+			range.deleteContents(); // delete any selected content
+			range.insertNode(textNode);
+			range.setStartAfter(textNode); // set the cursor after the inserted spaces
+			range.setEndAfter(textNode);
+			selection.removeAllRanges();
+			selection.addRange(range);
+		}
+                if (e.ctrlKey && e.key == 'b') {
+		  e.preventDefault();
+		  document.execCommand('bold');
+		}
+                if (e.ctrlKey && e.key == 'i') {
+                  e.preventDefault();
+                  document.execCommand('italic');
+                }
+	});
 </script>
+
