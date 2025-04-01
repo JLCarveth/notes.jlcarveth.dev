@@ -1,55 +1,136 @@
 <html>
+
 <head>
+  <meta charset="UTF-8">
   <title>Simple Notes</title>
   <style>
     html {
       font-family: "Courier New", monospace;
       line-height: 1.5;
-      padding: 20px;
+      padding: 0;
       background-color: #f9f9f9;
+      height: 100%;
+
+      &.dark-theme {
+        background-color: #1a1a1a;
+      }
     }
-    
+
     body {
-      max-width: 800px;
-      margin: 0 auto;
+      display: flex;
+      margin: 0;
+      height: 100%;
       background-color: white;
-      padding: 30px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      min-height: 90vh;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       outline: none;
-      white-space: pre-wrap;
+
+      &.dark-theme {
+        background-color: #2a2a2a;
+        color: #e0e0e0;
+      }
     }
-    
-    #editor {
-      width: 100%;
-      min-height: 80vh;
-      outline: none;
-      white-space: pre-wrap;
-    }
-    
-    pre {
+
+    #sidebar {
+      width: 250px;
       background-color: #f0f0f0;
-      padding: 10px;
-      border-radius: 3px;
-      overflow-x: auto;
+      border-right: 1px solid #ddd;
+      overflow-y: auto;
+      height: 100%;
+      padding: 15px;
+      box-sizing: border-box;
+
+      &.dark-theme {
+        background-color: #333;
+        border-right-color: #444;
+      }
+
+      #sidebar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #ddd;
+
+        &.dark-theme {
+          border-bottom-color: #444;
+        }
+      }
+
+      #notes-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .note-item {
+        padding: 8px 10px;
+        margin-bottom: 5px;
+        border-radius: 3px;
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &:hover {
+          background-color: #e0e0e0;
+        }
+
+        &.active {
+          background-color: #0078d7;
+          color: white;
+        }
+
+        &.dark-theme:hover {
+          background-color: #444;
+        }
+
+        &.dark-theme.active {
+          background-color: #005a9e;
+        }
+      }
     }
-    
-    code {
-      background-color: #f0f0f0;
-      padding: 2px 4px;
-      border-radius: 2px;
-      font-family: "Courier New", monospace;
+
+    #main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+
+      #editor {
+        flex: 1;
+        padding: 30px;
+        outline: none;
+        white-space: pre-wrap;
+        overflow-y: auto;
+      }
+
+      pre {
+        background-color: #f0f0f0;
+        padding: 10px;
+        border-radius: 3px;
+        overflow-x: auto;
+      }
+
+      code {
+        background-color: #f0f0f0;
+        padding: 2px 4px;
+        border-radius: 2px;
+        font-family: "Courier New", monospace;
+      }
     }
-    
-    ul, ol {
+
+    ul,
+    ol {
       padding-left: 30px;
       list-style-type: none;
     }
-    
+
     li {
       position: relative;
     }
-    
+
     .toolbar {
       position: fixed;
       bottom: 20px;
@@ -57,36 +138,48 @@
       background: white;
       padding: 5px;
       border-radius: 5px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
       display: flex;
       gap: 5px;
       z-index: 100;
-    }
-    
-    .toolbar button {
-      background: none;
-      border: 1px solid #ddd;
-      border-radius: 3px;
-      padding: 5px 8px;
-      cursor: pointer;
 
-      &:hover {
-        background: #f0f0f0;
+      &.dark-theme {
+        background: #333;
+        color: #e0e0e0;
       }
-      
-      &:active {
-        background: #e0e0e0;
+
+      button,
+      select {
+        background: none;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        padding: 5px 8px;
+        cursor: pointer;
+
+        &:hover {
+          background: #f0f0f0;
+        }
+
+        &:active {
+          background: #e0e0e0;
+        }
+      }
+
+      &.dark-theme button,
+      &.dark-theme select {
+        border-color: #555;
+        color: #e0e0e0;
+      }
+
+      &.dark-theme button:hover {
+        background: #444;
+      }
+
+      &.dark-theme button:active {
+        background: #555;
       }
     }
-    
-    .toolbar select {
-      background: none;
-      border: 1px solid #ddd;
-      border-radius: 3px;
-      padding: 4px;
-      cursor: pointer;
-    }
-    
+
     .word-count {
       position: fixed;
       bottom: 20px;
@@ -94,148 +187,260 @@
       background: white;
       padding: 5px 10px;
       border-radius: 5px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
       font-size: 14px;
       z-index: 100;
-    }
-    
-    /* Theme styles */
-    body.dark-theme {
-      background-color: #2a2a2a;
-      color: #e0e0e0;
-      
-      & pre, & code {
-        background-color: #3a3a3a;
+
+      &.dark-theme {
+        background: #333;
         color: #e0e0e0;
       }
     }
-    
-    html.dark-theme {
-      background-color: #1a1a1a;
-    }
-    
-    .dark-theme .toolbar,
-    .dark-theme .word-count {
-      background: #333;
-      color: #e0e0e0;
-    }
-    
-    .dark-theme .toolbar button,
-    .dark-theme .toolbar select {
-      border-color: #555;
-      color: #e0e0e0;
-      
-      &:hover {
-        background: #444;
-      }
-      
-      &:active {
-        background: #555;
-      }
-    }
-    
+
     /* Highlight styling */
     .highlight-yellow {
       background-color: #ffeaa7;
     }
-    
+
     .highlight-green {
       background-color: #b8e994;
     }
-    
+
     .highlight-blue {
       background-color: #7ed6df;
     }
-    
+
     .highlight-red {
       background-color: #ff7979;
     }
-    
-    .dark-theme .highlight-yellow {
+
+    &.dark-theme .highlight-yellow {
       background-color: #8c7c36;
     }
-    
-    .dark-theme .highlight-green {
+
+    &.dark-theme .highlight-green {
       background-color: #336534;
     }
-    
-    .dark-theme .highlight-blue {
+
+    &.dark-theme .highlight-blue {
       background-color: #2c5e63;
     }
-    
-    .dark-theme .highlight-red {
+
+    &.dark-theme .highlight-red {
       background-color: #803232;
+    }
+
+    /* New note button */
+    #new-note-btn {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: inherit;
+    }
+
+    /* Search box */
+    #search-notes {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      box-sizing: border-box;
+
+      &.dark-theme {
+        background-color: #333;
+        border-color: #555;
+        color: #e0e0e0;
+      }
     }
   </style>
 </head>
+
 <body>
-  <div id="editor" contenteditable="true" autofocus></div>
-  
-  <div class="toolbar">
-    <button id="btn-bold" title="Bold (Ctrl+B)">B</button>
-    <button id="btn-italic" title="Italic (Ctrl+I)">I</button>
-    <button id="btn-code" title="Code Block (Ctrl+K)">Code</button>
-    <button id="btn-list" title="List (Ctrl+L)">• List</button>
-    <select id="highlight-select" title="Highlight">
-      <option value="">Highlight</option>
-      <option value="highlight-yellow">Yellow</option>
-      <option value="highlight-green">Green</option>
-      <option value="highlight-blue">Blue</option>
-      <option value="highlight-red">Red</option>
-      <option value="remove">Remove</option>
-    </select>
-    <button id="btn-theme" title="Toggle Dark/Light Theme">🌓</button>
-    <button id="btn-export" title="Export as Text">📤</button>
-    <button id="btn-save" title="Save (Ctrl+S)">💾</button>
+  <div id="sidebar">
+    <div id="sidebar-header">
+      <h3>Notes</h3>
+      <button id="new-note-btn" title="New Note">+</button>
+    </div>
+    <input type="text" id="search-notes" placeholder="Search notes...">
+    <ul id="notes-list"></ul>
   </div>
-  
-  <div class="word-count">Words: 0 | Characters: 0</div>
+
+  <div id="main-content">
+    <div id="editor" contenteditable="true" autofocus></div>
+
+    <div class="toolbar">
+      <button id="btn-bold" title="Bold (Ctrl+B)">B</button>
+      <button id="btn-italic" title="Italic (Ctrl+I)">I</button>
+      <button id="btn-code" title="Code Block (Ctrl+K)">Code</button>
+      <button id="btn-list" title="List (Ctrl+L)">• List</button>
+      <select id="highlight-select" title="Highlight">
+        <option value="">Highlight</option>
+        <option value="highlight-yellow">Yellow</option>
+        <option value="highlight-green">Green</option>
+        <option value="highlight-blue">Blue</option>
+        <option value="highlight-red">Red</option>
+        <option value="remove">Remove</option>
+      </select>
+      <button id="btn-theme" title="Toggle Dark/Light Theme">🌓</button>
+      <button id="btn-export" title="Export as Text">📤</button>
+      <button id="btn-save" title="Save (Ctrl+S)">💾</button>
+    </div>
+
+    <div class="word-count">Words: 0 | Characters: 0</div>
+  </div>
 
   <script>
     const editor = document.getElementById('editor');
-    
-    // Load saved content
-    const savedContent = localStorage.getItem("saved-content");
-    if (savedContent) {
-      editor.innerHTML = savedContent;
+    const notesList = document.getElementById('notes-list');
+    const newNoteBtn = document.getElementById('new-note-btn');
+    const searchNotes = document.getElementById('search-notes');
+
+    // Notes data
+    let notes = [];
+    let currentNoteId = null;
+
+    // Load saved notes and theme preference
+    function loadData() {
+      const savedNotes = localStorage.getItem("saved-notes");
+      if (savedNotes) {
+        notes = JSON.parse(savedNotes);
+        renderNotesList();
+        if (notes.length > 0) {
+          loadNote(notes[0].id);
+        } else {
+          createNewNote();
+        }
+      } else {
+        createNewNote();
+      }
+
+      // Load theme preference
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "dark") {
+        document.documentElement.classList.add("dark-theme");
+        document.body.classList.add("dark-theme");
+      }
     }
-    
-    // Load theme preference
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark") {
-      document.documentElement.classList.add("dark-theme");
-      document.body.classList.add("dark-theme");
+
+    // Create a new note
+    function createNewNote() {
+      const newNote = {
+        id: Date.now().toString(),
+        title: "Untitled Note",
+        content: "",
+        updatedAt: new Date().toISOString()
+      };
+
+      notes.unshift(newNote);
+      saveNotes();
+      renderNotesList();
+      loadNote(newNote.id);
+
+      // Focus editor and update word count
+      editor.focus();
+      updateWordCount();
     }
-    
-    // Auto-save every 2 seconds
+
+    // Save all notes to localStorage
+    function saveNotes() {
+      localStorage.setItem("saved-notes", JSON.stringify(notes));
+    }
+
+    // Render notes list in sidebar
+    function renderNotesList(filter = '') {
+      notesList.innerHTML = '';
+
+      const filteredNotes = filter ?
+        notes.filter(note =>
+          note.title.toLowerCase().includes(filter.toLowerCase()) ||
+          note.content.toLowerCase().includes(filter.toLowerCase())
+        ) :
+        notes;
+
+      filteredNotes.forEach(note => {
+        const li = document.createElement('li');
+        li.className = 'note-item' + (note.id === currentNoteId ? ' active' : '');
+        li.textContent = note.title;
+        li.dataset.id = note.id;
+
+        li.addEventListener('click', () => {
+          if (note.id !== currentNoteId) {
+            loadNote(note.id);
+          }
+        });
+
+        notesList.appendChild(li);
+      });
+    }
+
+    // Load a note into the editor
+    function loadNote(noteId) {
+      const note = notes.find(n => n.id === noteId);
+      if (!note) return;
+
+      currentNoteId = noteId;
+      editor.innerHTML = note.content;
+      renderNotesList(searchNotes.value);
+      updateWordCount();
+      editor.focus();
+    }
+
+    // Save current note
+    function saveCurrentNote() {
+      if (!currentNoteId) return;
+
+      const noteIndex = notes.findIndex(n => n.id === currentNoteId);
+      if (noteIndex === -1) return;
+
+      // Update note content and title (first line as title)
+      const content = editor.innerHTML;
+      const firstLine = editor.innerText.split('\n')[0] || "Untitled Note";
+      const title = firstLine.length > 30 ? firstLine.substring(0, 30) + '...' : firstLine;
+
+      notes[noteIndex] = {
+        ...notes[noteIndex],
+        title,
+        content,
+        updatedAt: new Date().toISOString()
+      };
+
+      saveNotes();
+      renderNotesList(searchNotes.value);
+    }
+
+    // Auto-save current note every 2 seconds
     setInterval(() => {
-      localStorage.setItem("saved-content", editor.innerHTML);
+      saveCurrentNote();
       updateWordCount();
     }, 2000);
-    
+
     // Update word count
     function updateWordCount() {
       const text = editor.innerText || "";
       const wordCount = text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
       const charCount = text.length;
-      
+
       document.querySelector(".word-count").textContent = `Words: ${wordCount} | Characters: ${charCount}`;
     }
-    
-    // Initial word count
-    updateWordCount();
-    
-    // Listen for content changes to update word count
-    editor.addEventListener("input", updateWordCount);
 
-    editor.addEventListener('keydown', function(e) {
+    // Event listeners
+    editor.addEventListener("input", updateWordCount);
+    newNoteBtn.addEventListener("click", createNewNote);
+
+    searchNotes.addEventListener("input", () => {
+      renderNotesList(searchNotes.value);
+    });
+
+    editor.addEventListener('keydown', function (e) {
       // Tab key - insert 4 spaces
       if (e.key === 'Tab') {
         e.preventDefault();
         insertSpaces(4);
         return;
       }
-      
+
       // Backspace - handle tab removal
       if (e.key === 'Backspace') {
         if (handleBackspace()) {
@@ -243,7 +448,7 @@
         }
         return;
       }
-      
+
       // Enter key - handle list continuation
       if (e.key === 'Enter') {
         if (handleEnter()) {
@@ -251,34 +456,39 @@
         }
         return;
       }
-      
+
       // Keyboard shortcuts
       if (e.ctrlKey || e.metaKey) {
-        switch(e.key) {
+        switch (e.key) {
           case 'b': // Bold
             e.preventDefault();
             document.execCommand('bold');
             break;
-            
+
           case 'i': // Italic
             e.preventDefault();
             document.execCommand('italic');
             break;
-            
+
           case 'k': // Code
             e.preventDefault();
             handleCodeBlock();
             break;
-            
+
           case 'l': // List
             e.preventDefault();
             handleList();
             break;
-            
+
           case 's': // Save
             e.preventDefault();
-            //localStorage.setItem("saved-content", editor.innerHTML);
-            showNotification("Content saved successfully");
+            saveCurrentNote();
+            showNotification("Note saved successfully");
+            break;
+
+          case 'n': // New note
+            e.preventDefault();
+            createNewNote();
             break;
         }
       }
@@ -287,11 +497,11 @@
     function insertSpaces(count) {
       const selection = window.getSelection();
       if (!selection.rangeCount) return;
-      
+
       const range = selection.getRangeAt(0);
       range.deleteContents();
       range.insertNode(document.createTextNode(' '.repeat(count)));
-      
+
       // Move cursor after the spaces
       range.setStart(range.endContainer, range.endOffset);
       range.collapse(true);
@@ -302,11 +512,11 @@
     function handleBackspace() {
       const selection = window.getSelection();
       if (!selection.rangeCount) return false;
-      
+
       const range = selection.getRangeAt(0);
       const node = range.startContainer;
       const offset = range.startOffset;
-      
+
       // Check for tab removal (4 spaces)
       if (offset >= 4 && node.nodeType === Node.TEXT_NODE) {
         const textBefore = node.textContent.substring(offset - 4, offset);
@@ -321,21 +531,21 @@
           return true;
         }
       }
-      
+
       return false;
     }
 
     function handleEnter() {
       const selection = window.getSelection();
       if (!selection.rangeCount) return false;
-      
+
       const range = selection.getRangeAt(0);
       const node = range.startContainer;
       const offset = range.startOffset;
-      
+
       // Get current line text
       const lineText = getCurrentLineText(node, offset);
-      
+
       // Check if we're in a list line (starts with '- ')
       if (lineText.trim().startsWith('- ')) {
         // If the line only has the bullet, remove it on enter
@@ -351,55 +561,55 @@
           document.execCommand('insertText', false, '\n');
           return true;
         }
-        
+
         // Get the indentation
         const indentation = lineText.match(/^\s*/)[0];
-        
+
         // Insert new list item with same indentation
         document.execCommand('insertText', false, '\n' + indentation + '- ');
         return true;
       }
-      
+
       return false;
     }
 
     function getCurrentLineText(node, offset) {
       if (node.nodeType !== Node.TEXT_NODE) return '';
-      
+
       const text = node.textContent;
       let lineStart = offset;
       while (lineStart > 0 && text[lineStart - 1] !== '\n') lineStart--;
-      
+
       let lineEnd = offset;
       while (lineEnd < text.length && text[lineEnd] !== '\n') lineEnd++;
-      
+
       return text.substring(lineStart, lineEnd);
     }
-    
+
     function getLineStartPosition(node, offset) {
-      if (node.nodeType !== Node.TEXT_NODE) return { node, offset: 0 };
-      
+      if (node.nodeType !== Node.TEXT_NODE) return {node, offset: 0};
+
       const text = node.textContent;
       let lineStart = offset;
       while (lineStart > 0 && text[lineStart - 1] !== '\n') lineStart--;
-      
-      return { node, offset: lineStart };
+
+      return {node, offset: lineStart};
     }
-    
+
     function handleCodeBlock() {
       const selection = window.getSelection();
       if (!selection.rangeCount) return;
-      
+
       const range = selection.getRangeAt(0);
       const selectedText = range.toString();
-      
+
       if (selectedText) {
         // If text is selected, wrap it in code tags
         document.execCommand('insertHTML', false, `<code>${selectedText}</code>`);
       } else {
         // If no text is selected, insert empty code tags and place cursor inside
         document.execCommand('insertHTML', false, '<code></code>');
-        
+
         // Move cursor inside code tags
         const codes = document.getElementsByTagName('code');
         if (codes.length > 0) {
@@ -412,102 +622,101 @@
         }
       }
     }
-    
+
     function handleList() {
       const selection = window.getSelection();
       if (!selection.rangeCount) return;
-      
+
       // Insert a list item at the current position
       document.execCommand('insertText', false, '- ');
     }
-    
+
     // Button event listeners
     document.getElementById('btn-bold').addEventListener('click', () => {
       document.execCommand('bold');
       editor.focus();
     });
-    
+
     document.getElementById('btn-italic').addEventListener('click', () => {
       document.execCommand('italic');
       editor.focus();
     });
-    
+
     document.getElementById('btn-code').addEventListener('click', () => {
       handleCodeBlock();
       editor.focus();
     });
-    
+
     document.getElementById('btn-list').addEventListener('click', () => {
       handleList();
       editor.focus();
     });
-    
+
     document.getElementById('btn-theme').addEventListener('click', () => {
       document.documentElement.classList.toggle('dark-theme');
       document.body.classList.toggle('dark-theme');
-      
-      // Save theme preference - commented out for sandbox
-      /*
+
+      // Save theme preference
       if (document.body.classList.contains('dark-theme')) {
         localStorage.setItem('theme', 'dark');
       } else {
         localStorage.setItem('theme', 'light');
       }
-      */
-      
+
       editor.focus();
     });
-    
+
     document.getElementById('btn-export').addEventListener('click', () => {
       const text = editor.innerText;
-      const blob = new Blob([text], { type: 'text/plain' });
+      const blob = new Blob([text], {type: 'text/plain'});
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'notes.txt';
+      const currentNote = notes.find(n => n.id === currentNoteId);
+      a.download = currentNote ? `${currentNote.title}.txt` : 'note.txt';
       a.click();
       editor.focus();
     });
-    
+
     document.getElementById('btn-save').addEventListener('click', () => {
-      // localStorage.setItem("saved-content", editor.innerHTML);
-      showNotification("Content saved successfully");
+      saveCurrentNote();
+      showNotification("Note saved successfully");
       editor.focus();
     });
-    
+
     // Highlight text
     document.getElementById('highlight-select').addEventListener('change', (e) => {
       const value = e.target.value;
       if (!value) return;
-      
+
       const selection = window.getSelection();
       if (!selection.rangeCount) return;
-      
+
       const range = selection.getRangeAt(0);
-      
+
       if (value === 'remove') {
         // Remove all highlight classes
         document.execCommand('removeFormat');
       } else {
         // Save the selection
         const selectedText = range.toString();
-        
+
         if (selectedText) {
           // Create a span with the highlight class
           const span = document.createElement('span');
           span.className = value;
           span.textContent = selectedText;
-          
+
           // Replace the selection with the span
           range.deleteContents();
           range.insertNode(span);
         }
       }
-      
+
       // Reset the select
       e.target.value = '';
       editor.focus();
     });
-    
+
     // Notification function
     function showNotification(message) {
       const notification = document.createElement('div');
@@ -522,9 +731,9 @@
       notification.style.zIndex = '200';
       notification.style.transition = 'opacity 0.3s ease-out';
       notification.textContent = message;
-      
+
       document.body.appendChild(notification);
-      
+
       // Remove after 2 seconds
       setTimeout(() => {
         notification.style.opacity = '0';
@@ -533,6 +742,10 @@
         }, 300);
       }, 2000);
     }
+
+    // Initialize the app
+    loadData();
   </script>
 </body>
+
 </html>
