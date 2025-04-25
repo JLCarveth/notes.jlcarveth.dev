@@ -263,6 +263,7 @@
     <div class="toolbar">
       <button id="btn-bold" title="Bold (Ctrl+B)">B</button>
       <button id="btn-italic" title="Italic (Ctrl+I)">I</button>
+      <button id="btn-underline" title="Underline (Ctrl+U)">U</button>
       <button id="btn-code" title="Code Block (Ctrl+K)">Code</button>
       <button id="btn-list" title="List (Ctrl+L)">• List</button>
       <select id="highlight-select" title="Highlight">
@@ -548,6 +549,11 @@
             e.preventDefault();
             document.execCommand('italic');
             break;
+            
+          case 'u': // Underline
+            e.preventDefault();
+            document.execCommand('underline');
+            break;
 
           case 'k': // Code
             e.preventDefault();
@@ -625,10 +631,10 @@
       // Get current line text
       const lineText = getCurrentLineText(node, offset);
 
-      // Check if we're in a list line (starts with '- ')
-      if (lineText.trim().startsWith('- ')) {
-        // If the line only has the bullet, remove it on enter
-        if (lineText.trim() === '- ') {
+      // Check if we're in a list line (starts with '- ' or just '-')
+      if (lineText.trim().startsWith('- ') || lineText.trim() === '-') {
+        // If the line only has the bullet or the bullet with empty content, remove it on enter
+        if (lineText.trim() === '- ' || lineText.trim() === '-') {
           // Delete the bullet
           const lineStartPos = getLineStartPosition(node, offset);
           const newRange = document.createRange();
@@ -718,6 +724,11 @@
 
     document.getElementById('btn-italic').addEventListener('click', () => {
       document.execCommand('italic');
+      editor.focus();
+    });
+    
+    document.getElementById('btn-underline').addEventListener('click', () => {
+      document.execCommand('underline');
       editor.focus();
     });
 
