@@ -312,7 +312,8 @@
         
         // Decode the data from the URL hash
         const encodedData = hash.substring(1); // Remove the # symbol
-        const jsonData = atob(encodedData);
+        // Use decodeURIComponent instead of atob to properly handle Unicode characters
+        const jsonData = decodeURIComponent(encodedData);
         const sharedNote = JSON.parse(jsonData);
         
         // Check if it's a single note object with required fields
@@ -400,7 +401,8 @@
       if (!currentNote) return window.location.href;
       
       const singleNoteData = JSON.stringify(currentNote);
-      const encodedData = btoa(singleNoteData);
+      // Use encodeURIComponent instead of btoa to properly handle Unicode characters
+      const encodedData = encodeURIComponent(singleNoteData);
       const url = `${window.location.origin}${window.location.pathname}#${encodedData}`;
       return url;
     }
