@@ -304,13 +304,19 @@
       if (!hash || hash.length <= 1) return false;
       
       try {
+        // First load existing notes from localStorage
+        const savedNotes = localStorage.getItem("saved-notes");
+        if (savedNotes) {
+          notes = JSON.parse(savedNotes);
+        }
+        
         // Decode the data from the URL hash
         const encodedData = hash.substring(1); // Remove the # symbol
         const jsonData = atob(encodedData);
         const sharedNote = JSON.parse(jsonData);
         
         // Check if it's a single note object with required fields
-        if (sharedNote && sharedNote.id && sharedNote.title && sharedNote.content) {
+        if (sharedNote && sharedNote.title && sharedNote.content) {
           // Generate a new ID to avoid conflicts with existing notes
           const newNote = {
             ...sharedNote,
@@ -325,7 +331,7 @@
           loadNote(newNote.id);
           
           // Clear the hash from URL to prevent reloading on refresh
-          history.replaceState(null, null, ' ');
+          history.replaceState(null, null, window.location.pathname);
           
           // Save to localStorage including the new shared note
           saveNotes();
@@ -340,9 +346,9 @@
 
     // Load saved notes and theme preference
     function loadData() {
-      // First check for shared data in URL
+      // First check for shared data in URL while preserving existing notes
       if (!checkForSharedData()) {
-        // If no shared data, load from localStorage
+        // If no shared data, just load from localStorage
         const savedNotes = localStorage.getItem("saved-notes");
         if (savedNotes) {
           try {
