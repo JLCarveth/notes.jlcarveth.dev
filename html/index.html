@@ -268,7 +268,6 @@
         <option value="highlight-red">Red</option>
         <option value="remove">Remove</option>
       </select>
-      <button id="btn-theme" title="Toggle Dark/Light Theme">🌓</button>
       <button id="btn-export" title="Export as Text">📤</button>
       <button id="btn-save" title="Save (Ctrl+S)">💾</button>
     </div>
@@ -281,6 +280,11 @@
     const notesList = document.getElementById('notes-list');
     const newNoteBtn = document.getElementById('new-note-btn');
     const searchNotes = document.getElementById('search-notes');
+
+    const isDarkMode = () => {
+      const { matches } = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
+      return matches;
+    }
 
     // Notes data
     let notes = [];
@@ -299,13 +303,6 @@
         }
       } else {
         createNewNote();
-      }
-
-      // Load theme preference
-      const savedTheme = localStorage.getItem("theme");
-      if (savedTheme === "dark") {
-        document.documentElement.classList.add("dark-theme");
-        document.body.classList.add("dark-theme");
       }
     }
 
@@ -637,20 +634,6 @@
       editor.focus();
     });
 
-    document.getElementById('btn-theme').addEventListener('click', () => {
-      document.documentElement.classList.toggle('dark-theme');
-      document.body.classList.toggle('dark-theme');
-
-      // Save theme preference
-      if (document.body.classList.contains('dark-theme')) {
-        localStorage.setItem('theme', 'dark');
-      } else {
-        localStorage.setItem('theme', 'light');
-      }
-
-      editor.focus();
-    });
-
     document.getElementById('btn-export').addEventListener('click', () => {
       const text = editor.innerText;
       const blob = new Blob([text], {type: 'text/plain'});
@@ -708,8 +691,8 @@
       notification.style.position = 'fixed';
       notification.style.bottom = '60px';
       notification.style.right = '20px';
-      notification.style.backgroundColor = document.body.classList.contains('dark-theme') ? '#333' : 'white';
-      notification.style.color = document.body.classList.contains('dark-theme') ? '#e0e0e0' : 'black';
+      notification.style.backgroundColor = isDarkMode() ? '#333' : 'white';
+      notification.style.color = isDarkMode() ? '#e0e0e0' : 'black';
       notification.style.padding = '10px 15px';
       notification.style.borderRadius = '4px';
       notification.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
