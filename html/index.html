@@ -301,6 +301,7 @@
       const hash = window.location.hash.substring(1);
       
       if (hash) {
+        console.log(`Hash Detected!`);
         try {
           // Decode base64 and parse JSON
           const decodedData = atob(hash);
