@@ -240,7 +240,7 @@
       color: light-dark(#000000, #FFFFFF);
       /* Text color */
     }
-    
+
     #share-btn {
       margin-left: 5px;
     }
@@ -289,7 +289,7 @@
     const shareBtn = document.getElementById('btn-share');
 
     const isDarkMode = () => {
-      const { matches } = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
+      const {matches} = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
       return matches;
     }
 
@@ -297,17 +297,25 @@
     let notes = [];
     let currentNoteId = null;
 
-    // Check for shared data in URL hash
+    / Generate shareable URL with UTF-8 support
+    function generateShareableURL() {
+      const notesData = JSON.stringify(notes);
+      // Use encodeURIComponent instead of btoa
+      const encodedData = encodeURIComponent(notesData);
+      const url = `${window.location.origin}${window.location.pathname}#${encodedData}`;
+      return url;
+    }
+
+    // Update the checkForSharedData function
     function checkForSharedData() {
       const hash = window.location.hash.substring(1);
-      
+
       if (hash) {
-        console.log(`Hash Detected!`);
         try {
-          // Decode base64 and parse JSON
-          const decodedData = atob(hash);
+          // Use decodeURIComponent instead of atob
+          const decodedData = decodeURIComponent(hash);
           const sharedData = JSON.parse(decodedData);
-          
+
           if (sharedData && Array.isArray(sharedData)) {
             notes = sharedData;
             saveNotes();
@@ -327,7 +335,7 @@
           showNotification("Invalid shared data");
         }
       }
-      
+
       return false;
     }
 
@@ -386,7 +394,7 @@
     // Share notes
     function shareNotes() {
       const url = generateShareableURL();
-      
+
       // Copy to clipboard
       navigator.clipboard.writeText(url).then(() => {
         showNotification("Shareable link copied to clipboard");
