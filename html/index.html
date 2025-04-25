@@ -239,6 +239,10 @@
       color: light-dark(#000000, #FFFFFF);
       /* Text color */
     }
+    
+    #share-btn {
+      margin-left: 5px;
+    }
   </style>
 </head>
 
@@ -270,6 +274,7 @@
       </select>
       <button id="btn-export" title="Export as Text">📤</button>
       <button id="btn-save" title="Save (Ctrl+S)">💾</button>
+      <button id="btn-share" title="Share Notes">🔗</button>
     </div>
 
     <div class="word-count sora-regular">Words: 0 | Characters: 0</div>
@@ -280,6 +285,7 @@
     const notesList = document.getElementById('notes-list');
     const newNoteBtn = document.getElementById('new-note-btn');
     const searchNotes = document.getElementById('search-notes');
+    const shareBtn = document.getElementById('btn-share');
 
     const isDarkMode = () => {
       const { matches } = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
@@ -290,19 +296,56 @@
     let notes = [];
     let currentNoteId = null;
 
+    // Check for shared data in URL hash
+    function checkForSharedData() {
+      const hash = window.location.hash.substring(1);
+      
+      if (hash) {
+        try {
+          // Decode base64 and parse JSON
+          const decodedData = atob(hash);
+          const sharedData = JSON.parse(decodedData);
+          
+          if (sharedData && Array.isArray(sharedData)) {
+            notes = sharedData;
+            saveNotes();
+            renderNotesList();
+            if (notes.length > 0) {
+              loadNote(notes[0].id);
+            } else {
+              createNewNote();
+            }
+            // Clear the hash to prevent reloading on refresh
+            history.replaceState(null, null, ' ');
+            showNotification("Shared notes loaded successfully");
+            return true;
+          }
+        } catch (e) {
+          console.error('Error loading shared data:', e);
+          showNotification("Invalid shared data");
+        }
+      }
+      
+      return false;
+    }
+
     // Load saved notes and theme preference
     function loadData() {
-      const savedNotes = localStorage.getItem("saved-notes");
-      if (savedNotes) {
-        notes = JSON.parse(savedNotes);
-        renderNotesList();
-        if (notes.length > 0) {
-          loadNote(notes[0].id);
+      // First check for shared data in URL
+      if (!checkForSharedData()) {
+        // If no shared data, load from localStorage
+        const savedNotes = localStorage.getItem("saved-notes");
+        if (savedNotes) {
+          notes = JSON.parse(savedNotes);
+          renderNotesList();
+          if (notes.length > 0) {
+            loadNote(notes[0].id);
+          } else {
+            createNewNote();
+          }
         } else {
           createNewNote();
         }
-      } else {
-        createNewNote();
       }
     }
 
@@ -328,6 +371,28 @@
     // Save all notes to localStorage
     function saveNotes() {
       localStorage.setItem("saved-notes", JSON.stringify(notes));
+    }
+
+    // Generate shareable URL
+    function generateShareableURL() {
+      const notesData = JSON.stringify(notes);
+      const encodedData = btoa(notesData);
+      const url = `${window.location.origin}${window.location.pathname}#${encodedData}`;
+      return url;
+    }
+
+    // Share notes
+    function shareNotes() {
+      const url = generateShareableURL();
+      
+      // Copy to clipboard
+      navigator.clipboard.writeText(url).then(() => {
+        showNotification("Shareable link copied to clipboard");
+      }).catch(err => {
+        console.error('Could not copy URL: ', err);
+        // Fallback
+        prompt("Copy this shareable link:", url);
+      });
     }
 
     // Render notes list in sidebar
@@ -410,6 +475,7 @@
     // Event listeners
     editor.addEventListener("input", updateWordCount);
     newNoteBtn.addEventListener("click", createNewNote);
+    shareBtn.addEventListener("click", shareNotes);
 
     searchNotes.addEventListener("input", () => {
       renderNotesList(searchNotes.value);
