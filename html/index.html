@@ -240,7 +240,7 @@
       color: light-dark(#000000, #FFFFFF);
       /* Text color */
     }
-
+    
     #share-btn {
       margin-left: 5px;
     }
@@ -289,7 +289,7 @@
     const shareBtn = document.getElementById('btn-share');
 
     const isDarkMode = () => {
-      const {matches} = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
+      const { matches } = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
       return matches;
     }
 
@@ -297,45 +297,44 @@
     let notes = [];
     let currentNoteId = null;
 
-    / Generate shareable URL with UTF-8 support
-    function generateShareableURL() {
-      const notesData = JSON.stringify(notes);
-      // Use encodeURIComponent instead of btoa
-      const encodedData = encodeURIComponent(notesData);
-      const url = `${window.location.origin}${window.location.pathname}#${encodedData}`;
-      return url;
-    }
-
-    // Update the checkForSharedData function
+    // Check for shared data in URL
     function checkForSharedData() {
-      const hash = window.location.hash.substring(1);
-
-      if (hash) {
-        try {
-          // Use decodeURIComponent instead of atob
-          const decodedData = decodeURIComponent(hash);
-          const sharedData = JSON.parse(decodedData);
-
-          if (sharedData && Array.isArray(sharedData)) {
-            notes = sharedData;
-            saveNotes();
-            renderNotesList();
-            if (notes.length > 0) {
-              loadNote(notes[0].id);
-            } else {
-              createNewNote();
-            }
-            // Clear the hash to prevent reloading on refresh
-            history.replaceState(null, null, ' ');
-            showNotification("Shared notes loaded successfully");
-            return true;
-          }
-        } catch (e) {
-          console.error('Error loading shared data:', e);
-          showNotification("Invalid shared data");
+      // Get hash from URL
+      const hash = window.location.hash;
+      if (!hash || hash.length <= 1) return false;
+      
+      try {
+        // Decode the data from the URL hash
+        const encodedData = hash.substring(1); // Remove the # symbol
+        const jsonData = atob(encodedData);
+        const sharedNote = JSON.parse(jsonData);
+        
+        // Check if it's a single note object with required fields
+        if (sharedNote && sharedNote.id && sharedNote.title && sharedNote.content) {
+          // Generate a new ID to avoid conflicts with existing notes
+          const newNote = {
+            ...sharedNote,
+            id: Date.now().toString(),
+            title: sharedNote.title + " (Shared)",
+            updatedAt: new Date().toISOString()
+          };
+          
+          // Add the shared note to existing notes
+          notes.unshift(newNote);
+          renderNotesList();
+          loadNote(newNote.id);
+          
+          // Clear the hash from URL to prevent reloading on refresh
+          history.replaceState(null, null, ' ');
+          
+          // Save to localStorage including the new shared note
+          saveNotes();
+          return true;
         }
+      } catch (error) {
+        console.error('Error parsing shared data:', error);
       }
-
+      
       return false;
     }
 
@@ -346,11 +345,16 @@
         // If no shared data, load from localStorage
         const savedNotes = localStorage.getItem("saved-notes");
         if (savedNotes) {
-          notes = JSON.parse(savedNotes);
-          renderNotesList();
-          if (notes.length > 0) {
-            loadNote(notes[0].id);
-          } else {
+          try {
+            notes = JSON.parse(savedNotes);
+            renderNotesList();
+            if (notes.length > 0) {
+              loadNote(notes[0].id);
+            } else {
+              createNewNote();
+            }
+          } catch (error) {
+            console.error('Error parsing saved notes:', error);
             createNewNote();
           }
         } else {
@@ -383,25 +387,34 @@
       localStorage.setItem("saved-notes", JSON.stringify(notes));
     }
 
-    // Generate shareable URL
+    // Generate shareable URL for current note only
     function generateShareableURL() {
-      const notesData = JSON.stringify(notes);
-      const encodedData = btoa(notesData);
+      // Only share the current note
+      const currentNote = notes.find(note => note.id === currentNoteId);
+      if (!currentNote) return window.location.href;
+      
+      const singleNoteData = JSON.stringify(currentNote);
+      const encodedData = btoa(singleNoteData);
       const url = `${window.location.origin}${window.location.pathname}#${encodedData}`;
       return url;
     }
 
-    // Share notes
+    // Share current note
     function shareNotes() {
+      if (!currentNoteId) {
+        showNotification("Please select a note to share");
+        return;
+      }
+      
       const url = generateShareableURL();
-
+      
       // Copy to clipboard
       navigator.clipboard.writeText(url).then(() => {
-        showNotification("Shareable link copied to clipboard");
+        showNotification("Shareable link for current note copied to clipboard");
       }).catch(err => {
         console.error('Could not copy URL: ', err);
         // Fallback
-        prompt("Copy this shareable link:", url);
+        prompt("Copy this shareable link for your current note:", url);
       });
     }
 
