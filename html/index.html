@@ -268,10 +268,13 @@
       }
 
       pre {
-        background-color: light-dark(#F8FAFC, #1E293B);
-        padding: 10px;
-        border-radius: 3px;
+        background-color: light-dark(#EEF2F7, #263345);
+        border: 1px solid light-dark(#D1D5DB, #4A5568);
+        border-left: 3px solid light-dark(#6246EA, #8B7FD4);
+        padding: 12px 16px;
+        border-radius: 4px;
         overflow-x: auto;
+        margin: 8px 0;
       }
 
       code {
@@ -279,6 +282,12 @@
         padding: 2px 4px;
         border-radius: 2px;
         font-family: "Courier New", monospace;
+      }
+
+      pre > code {
+        background: none;
+        padding: 0;
+        border-radius: 0;
       }
     }
 
@@ -1236,10 +1245,10 @@
       const range = selection.getRangeAt(0);
       const selectedText = range.toString();
       if (selectedText) {
-        document.execCommand('insertHTML', false, `<code>${selectedText}</code>`);
+        document.execCommand('insertHTML', false, `<pre><code>${selectedText}</code></pre>`);
       } else {
-        document.execCommand('insertHTML', false, '<code></code>');
-        const codes = document.getElementsByTagName('code');
+        document.execCommand('insertHTML', false, '<pre><code></code></pre>');
+        const codes = editor.querySelectorAll('pre > code');
         if (codes.length > 0) {
           const lastCode = codes[codes.length - 1];
           const newRange = document.createRange();
