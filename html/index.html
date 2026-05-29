@@ -13,9 +13,7 @@
       line-height: 1.5;
       padding: 0;
       background-color: light-dark(#F8FAFC, #1E293B);
-      /* Light/dark background */
       color: light-dark(#4A5568, #FFFFFF);
-      /* Text color */
       height: 100%;
       color-scheme: light dark;
     }
@@ -25,7 +23,6 @@
       margin: 0;
       height: 100%;
       background-color: light-dark(#F8FAFC, #1E293B);
-      /* Light/dark background */
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       outline: none;
       color-scheme: light dark;
@@ -46,7 +43,6 @@
       font-style: normal;
     }
 
-
     .sora-heading {
       font-family: "Sora", sans-serif;
       font-optical-sizing: auto;
@@ -57,9 +53,7 @@
     #sidebar {
       width: 250px;
       background-color: light-dark(#F8FAFC, #1E293B);
-      /* Light/dark background */
       border-right: 1px solid light-dark(#D1D5DB, #4A5568);
-      /* Divider */
       overflow-y: auto;
       height: 100%;
       padding: 15px;
@@ -73,7 +67,12 @@
       margin-bottom: 15px;
       padding-bottom: 10px;
       border-bottom: 1px solid light-dark(#D1D5DB, #4A5568);
-      /* Divider */
+    }
+
+    #sidebar-header .header-buttons {
+      display: flex;
+      gap: 4px;
+      align-items: center;
     }
 
     #notes-list {
@@ -87,19 +86,169 @@
       margin-bottom: 5px;
       border-radius: 3px;
       cursor: pointer;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 4px;
 
       &:hover {
         background-color: light-dark(#E5E7EB, #3A4058);
-        /* Hover background */
       }
 
       &.active {
         background-color: light-dark(#6246EA, #5139B2);
-        /* Primary color */
         color: white;
+      }
+
+      .note-title {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+      }
+
+      .note-delete-btn {
+        flex-shrink: 0;
+        opacity: 0;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0 2px;
+        font-size: 14px;
+        line-height: 1;
+        color: inherit;
+        border-radius: 2px;
+
+        &:hover {
+          background-color: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.15));
+        }
+      }
+
+      &:hover .note-delete-btn,
+      &.active .note-delete-btn {
+        opacity: 1;
+      }
+    }
+
+    .folder-header {
+      padding: 6px 4px 4px;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      font-size: small;
+      font-weight: 600;
+      color: light-dark(#6246EA, #8B7FD4);
+      user-select: none;
+      border-radius: 3px;
+
+      &:hover {
+        background-color: light-dark(#EDE9FE, #2D2560);
+      }
+
+      .folder-name {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .folder-toggle {
+        font-size: 10px;
+        display: inline-block;
+        transition: transform 0.15s;
+        flex-shrink: 0;
+      }
+
+      .folder-toggle.collapsed {
+        transform: rotate(-90deg);
+      }
+    }
+
+    .unfiled-header {
+      padding: 6px 4px 4px;
+      margin-top: 10px;
+      font-size: small;
+      font-weight: 600;
+      color: light-dark(#9CA3AF, #6B7280);
+      user-select: none;
+      border-radius: 3px;
+      transition: background-color 0.1s, outline 0.1s;
+
+      &.drag-over {
+        background-color: light-dark(#E5E7EB, #3A4058);
+        outline: 2px dashed light-dark(#9CA3AF, #6B7280);
+      }
+    }
+
+    .folder-header.drag-over {
+      background-color: light-dark(#DDD6FE, #3D3580);
+      outline: 2px dashed light-dark(#6246EA, #8B7FD4);
+    }
+
+    .section-separator {
+      border-top: 1px solid light-dark(#D1D5DB, #4A5568);
+      margin: 8px 0 2px;
+      list-style: none;
+    }
+
+    .note-item[draggable="true"] {
+      cursor: grab;
+    }
+
+    .note-item.dragging,
+    .folder-header.dragging {
+      opacity: 0.4;
+    }
+
+    .note-item.drop-above,
+    .folder-header.drop-above {
+      border-top: 2px solid light-dark(#6246EA, #8B7FD4);
+    }
+
+    .note-item.drop-below,
+    .folder-header.drop-below {
+      border-bottom: 2px solid light-dark(#6246EA, #8B7FD4);
+    }
+
+    .folder-header[draggable="true"] {
+      cursor: grab;
+    }
+
+    .context-menu {
+      position: fixed;
+      background: light-dark(#FFFFFF, #2D3748);
+      border: 1px solid light-dark(#D1D5DB, #4A5568);
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      min-width: 160px;
+      padding: 4px 0;
+      font-family: "Sora", sans-serif;
+      font-size: small;
+
+      .context-item {
+        padding: 6px 14px;
+        cursor: pointer;
+        white-space: nowrap;
+
+        &:hover {
+          background: light-dark(#E5E7EB, #3A4058);
+        }
+      }
+
+      .context-separator {
+        border: none;
+        border-top: 1px solid light-dark(#E5E7EB, #4A5568);
+        margin: 4px 0;
+      }
+
+      .context-label {
+        padding: 4px 14px 2px;
+        font-size: 11px;
+        color: light-dark(#9CA3AF, #6B7280);
+        pointer-events: none;
       }
     }
 
@@ -120,7 +269,6 @@
 
       pre {
         background-color: light-dark(#F8FAFC, #1E293B);
-        /* Light/dark background */
         padding: 10px;
         border-radius: 3px;
         overflow-x: auto;
@@ -128,7 +276,6 @@
 
       code {
         background-color: light-dark(#E5E7EB, #3A4058);
-        /* Code background */
         padding: 2px 4px;
         border-radius: 2px;
         font-family: "Courier New", monospace;
@@ -150,7 +297,6 @@
       bottom: 20px;
       right: 20px;
       background: light-dark(#F8FAFC, #3A4058);
-      /* Toolbar background */
       padding: 5px;
       border-radius: 5px;
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
@@ -162,19 +308,16 @@
       select {
         background: none;
         border: 1px solid light-dark(#D1D5DB, #4A5568);
-        /* Border color */
         border-radius: 3px;
         padding: 5px 8px;
         cursor: pointer;
 
         &:hover {
           background: light-dark(#E5E7EB, #3A4058);
-          /* Hover background */
         }
 
         &:active {
           background: light-dark(#CED4DA, #495061);
-          /* Active background */
         }
       }
 
@@ -182,7 +325,6 @@
       select:focus {
         outline: none;
         box-shadow: 0 0 0 2px rgba(98, 70, 234, 0.5);
-        /* Focus outline */
       }
     }
 
@@ -191,7 +333,6 @@
       bottom: 20px;
       left: 20px;
       background: light-dark(#F8FAFC, #3A4058);
-      /* Background */
       padding: 5px 10px;
       border-radius: 5px;
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
@@ -199,7 +340,6 @@
       z-index: 100;
     }
 
-    /* Highlight styling */
     .highlight-yellow {
       background-color: light-dark(#FFDA61, #FFC107);
     }
@@ -216,31 +356,30 @@
       background-color: light-dark(#F44336, #EF5350);
     }
 
-    /* New note button */
-    #new-note-btn {
+    #new-note-btn,
+    #new-folder-btn {
       background: none;
       border: none;
       font-size: 18px;
       cursor: pointer;
       color: light-dark(#6246EA, #6246EA);
-      /* Primary color */
     }
 
-    /* Search box */
+    #new-folder-btn {
+      font-size: 15px;
+    }
+
     #search-notes {
       width: 100%;
       padding: 8px;
       margin-bottom: 15px;
       border: 1px solid light-dark(#D1D5DB, #4A5568);
-      /* Border color */
       border-radius: 3px;
       box-sizing: border-box;
       background-color: light-dark(#FFFFFF, #3A4058);
-      /* Background */
       color: light-dark(#000000, #FFFFFF);
-      /* Text color */
     }
-    
+
     #share-btn {
       margin-left: 5px;
     }
@@ -251,7 +390,10 @@
   <div id="sidebar">
     <div id="sidebar-header">
       <h3 class="sora-heading">Notes</h3>
-      <button id="new-note-btn" title="New Note">+</button>
+      <div class="header-buttons">
+        <button id="new-folder-btn" title="New Folder">📁</button>
+        <button id="new-note-btn" title="New Note">+</button>
+      </div>
     </div>
     <input type="text" id="search-notes" placeholder="Search notes...">
     <ul id="notes-list" class="sora-small"></ul>
@@ -261,6 +403,8 @@
     <div id="editor" class="sora-regular" contenteditable="true" autofocus></div>
 
     <div class="toolbar">
+      <button id="btn-h1" title="Heading 1 (Ctrl+1)">H1</button>
+      <button id="btn-h2" title="Heading 2 (Ctrl+2)">H2</button>
       <button id="btn-bold" title="Bold (Ctrl+B)">B</button>
       <button id="btn-italic" title="Italic (Ctrl+I)">I</button>
       <button id="btn-underline" title="Underline (Ctrl+U)">U</button>
@@ -286,6 +430,7 @@
     const editor = document.getElementById('editor');
     const notesList = document.getElementById('notes-list');
     const newNoteBtn = document.getElementById('new-note-btn');
+    const newFolderBtn = document.getElementById('new-folder-btn');
     const searchNotes = document.getElementById('search-notes');
     const shareBtn = document.getElementById('btn-share');
 
@@ -294,63 +439,56 @@
       return matches;
     }
 
-    // Notes data
     let notes = [];
+    let folders = [];
     let currentNoteId = null;
+    let draggedNoteId = null;
+    let draggedFolderId = null;
+    const collapsedFolders = new Set();
 
     // Check for shared data in URL
     function checkForSharedData() {
-      // Get hash from URL
       const hash = window.location.hash;
       if (!hash || hash.length <= 1) return false;
-      
+
       try {
-        // First load existing notes from localStorage
         const savedNotes = localStorage.getItem("saved-notes");
-        if (savedNotes) {
-          notes = JSON.parse(savedNotes);
-        }
-        
-        // Decode the data from the URL hash
-        const encodedData = hash.substring(1); // Remove the # symbol
-        // Use decodeURIComponent instead of atob to properly handle Unicode characters
+        if (savedNotes) notes = JSON.parse(savedNotes);
+
+        const encodedData = hash.substring(1);
         const jsonData = decodeURIComponent(encodedData);
         const sharedNote = JSON.parse(jsonData);
-        
-        // Check if it's a single note object with required fields
+
         if (sharedNote && sharedNote.title && sharedNote.content) {
-          // Generate a new ID to avoid conflicts with existing notes
           const newNote = {
             ...sharedNote,
             id: Date.now().toString(),
             title: sharedNote.title + " (Shared)",
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString(),
+            folder: null
           };
-          
-          // Add the shared note to existing notes
+
           notes.unshift(newNote);
           renderNotesList();
           loadNote(newNote.id);
-          
-          // Clear the hash from URL to prevent reloading on refresh
           history.replaceState(null, null, window.location.pathname);
-          
-          // Save to localStorage including the new shared note
           saveNotes();
           return true;
         }
       } catch (error) {
         console.error('Error parsing shared data:', error);
       }
-      
+
       return false;
     }
 
-    // Load saved notes and theme preference
     function loadData() {
-      // First check for shared data in URL while preserving existing notes
+      const savedFolders = localStorage.getItem("saved-folders");
+      if (savedFolders) {
+        try { folders = JSON.parse(savedFolders); } catch(e) { folders = []; }
+      }
+
       if (!checkForSharedData()) {
-        // If no shared data, just load from localStorage
         const savedNotes = localStorage.getItem("saved-notes");
         if (savedNotes) {
           try {
@@ -371,94 +509,476 @@
       }
     }
 
-    // Create a new note
     function createNewNote() {
       const newNote = {
         id: Date.now().toString(),
         title: "Untitled Note",
         content: "",
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
+        folder: null
       };
 
       notes.unshift(newNote);
       saveNotes();
       renderNotesList();
       loadNote(newNote.id);
-
-      // Focus editor and update word count
       editor.focus();
       updateWordCount();
     }
 
-    // Save all notes to localStorage
     function saveNotes() {
       localStorage.setItem("saved-notes", JSON.stringify(notes));
     }
 
-    // Generate shareable URL for current note only
-    function generateShareableURL() {
-      // Only share the current note
-      const currentNote = notes.find(note => note.id === currentNoteId);
-      if (!currentNote) return window.location.href;
-      
-      const singleNoteData = JSON.stringify(currentNote);
-      // Use encodeURIComponent instead of btoa to properly handle Unicode characters
-      const encodedData = encodeURIComponent(singleNoteData);
-      const url = `${window.location.origin}${window.location.pathname}#${encodedData}`;
-      return url;
+    function saveFolders() {
+      localStorage.setItem("saved-folders", JSON.stringify(folders));
     }
 
-    // Share current note
+    function generateShareableURL() {
+      const currentNote = notes.find(note => note.id === currentNoteId);
+      if (!currentNote) return window.location.href;
+      const singleNoteData = JSON.stringify(currentNote);
+      const encodedData = encodeURIComponent(singleNoteData);
+      return `${window.location.origin}${window.location.pathname}#${encodedData}`;
+    }
+
     function shareNotes() {
       if (!currentNoteId) {
         showNotification("Please select a note to share");
         return;
       }
-      
       const url = generateShareableURL();
-      
-      // Copy to clipboard
       navigator.clipboard.writeText(url).then(() => {
         showNotification("Shareable link for current note copied to clipboard");
       }).catch(err => {
         console.error('Could not copy URL: ', err);
-        // Fallback
         prompt("Copy this shareable link for your current note:", url);
       });
     }
 
-    // Render notes list in sidebar
-    function renderNotesList(filter = '') {
-      notesList.innerHTML = '';
+    // ── Folder operations ────────────────────────────────────────────────────
 
-      const filteredNotes = filter ?
-        notes.filter(note =>
-          note.title.toLowerCase().includes(filter.toLowerCase()) ||
-          note.content.toLowerCase().includes(filter.toLowerCase())
-        ) :
-        notes;
-
-      filteredNotes.forEach(note => {
-        const li = document.createElement('li');
-        li.className = 'note-item' + (note.id === currentNoteId ? ' active' : '');
-        li.textContent = note.title;
-        li.dataset.id = note.id;
-
-        li.addEventListener('click', () => {
-          if (note.id !== currentNoteId) {
-            loadNote(note.id);
-          }
-        });
-
-        notesList.appendChild(li);
-      });
+    function promptCreateFolder() {
+      const name = prompt('Folder name:');
+      if (name && name.trim()) createFolder(name.trim());
     }
 
-    // Load a note into the editor
-    function loadNote(noteId) {
+    function createFolder(name, parentId = null) {
+      folders.push({ id: Date.now().toString(), name, parentId: parentId || null });
+      saveFolders();
+      renderNotesList(searchNotes.value);
+    }
+
+    function promptCreateSubfolder(parentFolderId) {
+      const name = prompt('Subfolder name:');
+      if (name && name.trim()) createFolder(name.trim(), parentFolderId);
+    }
+
+    function getAllDescendantFolderIds(folderId) {
+      const children = folders.filter(f => f.parentId === folderId);
+      const ids = children.map(f => f.id);
+      children.forEach(f => ids.push(...getAllDescendantFolderIds(f.id)));
+      return ids;
+    }
+
+    function getFolderPath(folder) {
+      const parts = [folder.name];
+      let current = folder;
+      while (current.parentId) {
+        const parent = folders.find(f => f.id === current.parentId);
+        if (!parent) break;
+        parts.unshift(parent.name);
+        current = parent;
+      }
+      return parts.join(' / ');
+    }
+
+    function renameFolder(folderId, newName) {
+      const folder = folders.find(f => f.id === folderId);
+      if (folder) {
+        folder.name = newName;
+        saveFolders();
+        renderNotesList(searchNotes.value);
+      }
+    }
+
+    function deleteFolder(folderId) {
+      const toDelete = [folderId, ...getAllDescendantFolderIds(folderId)];
+      notes.forEach(n => { if (toDelete.includes(n.folder)) n.folder = null; });
+      folders = folders.filter(f => !toDelete.includes(f.id));
+      toDelete.forEach(id => collapsedFolders.delete(id));
+      saveFolders();
+      saveNotes();
+      renderNotesList(searchNotes.value);
+    }
+
+    function moveNoteToFolder(noteId, folderId) {
+      const note = notes.find(n => n.id === noteId);
+      if (note) {
+        note.folder = folderId || null;
+        saveNotes();
+        renderNotesList(searchNotes.value);
+      }
+    }
+
+    function canMoveFolderInto(draggedId, targetId) {
+      if (draggedId === targetId) return false;
+      return !getAllDescendantFolderIds(draggedId).includes(targetId);
+    }
+
+    function reorderNote(noteId, targetNoteId, position) {
+      const fromIdx = notes.findIndex(n => n.id === noteId);
+      const toIdx = notes.findIndex(n => n.id === targetNoteId);
+      if (fromIdx === -1 || toIdx === -1 || fromIdx === toIdx) return;
+      const targetFolder = notes[toIdx].folder;
+      const [note] = notes.splice(fromIdx, 1);
+      note.folder = targetFolder;
+      const newToIdx = notes.findIndex(n => n.id === targetNoteId);
+      notes.splice(position === 'above' ? newToIdx : newToIdx + 1, 0, note);
+      saveNotes();
+      renderNotesList(searchNotes.value);
+    }
+
+    function reorderFolderBy(folderId, targetFolderId, position) {
+      const fromIdx = folders.findIndex(f => f.id === folderId);
+      const toIdx = folders.findIndex(f => f.id === targetFolderId);
+      if (fromIdx === -1 || toIdx === -1) return;
+      const targetParentId = folders[toIdx].parentId;
+      const [folder] = folders.splice(fromIdx, 1);
+      folder.parentId = targetParentId;
+      const newToIdx = folders.findIndex(f => f.id === targetFolderId);
+      folders.splice(position === 'above' ? newToIdx : newToIdx + 1, 0, folder);
+      saveFolders();
+      renderNotesList(searchNotes.value);
+    }
+
+    function moveFolderIntoFolder(folderId, targetFolderId) {
+      if (!canMoveFolderInto(folderId, targetFolderId)) return;
+      const folder = folders.find(f => f.id === folderId);
+      if (folder) {
+        folder.parentId = targetFolderId;
+        saveFolders();
+        renderNotesList(searchNotes.value);
+      }
+    }
+
+    // ── Context menu ─────────────────────────────────────────────────────────
+
+    let activeContextMenu = null;
+
+    function hideContextMenu() {
+      if (activeContextMenu) {
+        activeContextMenu.remove();
+        activeContextMenu = null;
+      }
+    }
+
+    function buildContextMenu(x, y, items) {
+      hideContextMenu();
+      const menu = document.createElement('div');
+      menu.className = 'context-menu sora-small';
+
+      items.forEach(item => {
+        if (item === 'separator') {
+          const hr = document.createElement('div');
+          hr.className = 'context-separator';
+          menu.appendChild(hr);
+        } else if (item.label_header) {
+          const lbl = document.createElement('div');
+          lbl.className = 'context-label';
+          lbl.textContent = item.label_header;
+          menu.appendChild(lbl);
+        } else {
+          const div = document.createElement('div');
+          div.className = 'context-item';
+          div.textContent = item.label;
+          div.addEventListener('click', () => { hideContextMenu(); item.action(); });
+          menu.appendChild(div);
+        }
+      });
+
+      menu.style.left = x + 'px';
+      menu.style.top = y + 'px';
+      document.body.appendChild(menu);
+      activeContextMenu = menu;
+
+      // Nudge into viewport if needed
+      const rect = menu.getBoundingClientRect();
+      if (rect.right > window.innerWidth) menu.style.left = (x - rect.width) + 'px';
+      if (rect.bottom > window.innerHeight) menu.style.top = (y - rect.height) + 'px';
+    }
+
+    function showNoteContextMenu(x, y, noteId) {
       const note = notes.find(n => n.id === noteId);
       if (!note) return;
 
+      const items = [];
+
+      if (folders.length === 0) {
+        items.push({ label: 'Create a folder first', action: promptCreateFolder });
+      } else {
+        items.push({ label_header: 'Move to folder' });
+        folders.forEach(folder => {
+          const active = note.folder === folder.id;
+          const path = getFolderPath(folder);
+          items.push({
+            label: (active ? '✓ ' : '  ') + path,
+            action: () => moveNoteToFolder(noteId, active ? null : folder.id)
+          });
+        });
+        if (note.folder) {
+          items.push('separator');
+          items.push({ label: 'Remove from folder', action: () => moveNoteToFolder(noteId, null) });
+        }
+      }
+
+      buildContextMenu(x, y, items);
+    }
+
+    function showFolderContextMenu(x, y, folderId) {
+      const folder = folders.find(f => f.id === folderId);
+      if (!folder) return;
+
+      buildContextMenu(x, y, [
+        {
+          label: 'New subfolder',
+          action: () => promptCreateSubfolder(folderId)
+        },
+        'separator',
+        {
+          label: 'Rename folder',
+          action: () => {
+            const name = prompt('Rename folder:', folder.name);
+            if (name && name.trim()) renameFolder(folderId, name.trim());
+          }
+        },
+        'separator',
+        {
+          label: 'Delete folder',
+          action: () => {
+            if (confirm(`Delete "${folder.name}"? Notes and subfolders will become unfiled.`)) deleteFolder(folderId);
+          }
+        }
+      ]);
+    }
+
+    document.addEventListener('click', hideContextMenu);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') hideContextMenu(); });
+
+    // ── Rendering ────────────────────────────────────────────────────────────
+
+    function createNoteItem(note) {
+      const li = document.createElement('li');
+      li.className = 'note-item' + (note.id === currentNoteId ? ' active' : '');
+      li.dataset.id = note.id;
+
+      const titleSpan = document.createElement('span');
+      titleSpan.className = 'note-title';
+      titleSpan.textContent = note.title;
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'note-delete-btn';
+      deleteBtn.title = 'Delete note';
+      deleteBtn.textContent = '✕';
+      deleteBtn.addEventListener('click', e => { e.stopPropagation(); deleteNote(note.id); });
+
+      li.appendChild(titleSpan);
+      li.appendChild(deleteBtn);
+      li.addEventListener('click', () => { if (note.id !== currentNoteId) loadNote(note.id); });
+      li.addEventListener('contextmenu', e => { e.preventDefault(); showNoteContextMenu(e.clientX, e.clientY, note.id); });
+
+      li.draggable = true;
+      li.addEventListener('dragstart', e => {
+        draggedNoteId = note.id;
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(() => li.classList.add('dragging'), 0);
+      });
+      li.addEventListener('dragend', () => {
+        draggedNoteId = null;
+        li.classList.remove('dragging', 'drop-above', 'drop-below');
+      });
+      li.addEventListener('dragover', e => {
+        if (!draggedNoteId || draggedNoteId === note.id) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const rect = li.getBoundingClientRect();
+        const above = (e.clientY - rect.top) / rect.height < 0.5;
+        li.classList.toggle('drop-above', above);
+        li.classList.toggle('drop-below', !above);
+        e.dataTransfer.dropEffect = 'move';
+      });
+      li.addEventListener('dragleave', e => {
+        if (!li.contains(e.relatedTarget)) li.classList.remove('drop-above', 'drop-below');
+      });
+      li.addEventListener('drop', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        const above = li.classList.contains('drop-above');
+        li.classList.remove('drop-above', 'drop-below');
+        if (draggedNoteId && draggedNoteId !== note.id) reorderNote(draggedNoteId, note.id, above ? 'above' : 'below');
+      });
+
+      return li;
+    }
+
+    function hasMatchedInSubtree(folderId, matched) {
+      if (matched.some(n => n.folder === folderId)) return true;
+      return folders.filter(f => f.parentId === folderId).some(cf => hasMatchedInSubtree(cf.id, matched));
+    }
+
+    function renderFolderSection(folderId, depth, isSearching, matched) {
+      const folder = folders.find(f => f.id === folderId);
+      if (!folder) return;
+
+      const folderNotes = matched.filter(n => n.folder === folderId);
+      const childFolders = folders.filter(f => f.parentId === folderId);
+
+      if (isSearching && !hasMatchedInSubtree(folderId, matched)) return;
+
+      const isCollapsed = !isSearching && collapsedFolders.has(folderId);
+      const indent = depth * 12;
+
+      const headerLi = document.createElement('li');
+      headerLi.className = 'folder-header';
+      headerLi.style.paddingLeft = (4 + indent) + 'px';
+
+      const icon = document.createElement('span');
+      icon.textContent = isCollapsed ? '📁' : '📂';
+
+      const name = document.createElement('span');
+      name.className = 'folder-name';
+      name.textContent = folder.name;
+
+      const toggle = document.createElement('span');
+      toggle.className = 'folder-toggle' + (isCollapsed ? ' collapsed' : '');
+      toggle.textContent = '▾';
+
+      headerLi.append(icon, name, toggle);
+      headerLi.addEventListener('click', () => {
+        if (collapsedFolders.has(folderId)) collapsedFolders.delete(folderId);
+        else collapsedFolders.add(folderId);
+        renderNotesList(searchNotes.value);
+      });
+      headerLi.addEventListener('contextmenu', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        showFolderContextMenu(e.clientX, e.clientY, folderId);
+      });
+
+      headerLi.draggable = true;
+      headerLi.addEventListener('dragstart', e => {
+        draggedFolderId = folderId;
+        e.dataTransfer.effectAllowed = 'move';
+        e.stopPropagation();
+        setTimeout(() => headerLi.classList.add('dragging'), 0);
+      });
+      headerLi.addEventListener('dragend', () => {
+        draggedFolderId = null;
+        headerLi.classList.remove('dragging', 'drag-over', 'drop-above', 'drop-below');
+      });
+      headerLi.addEventListener('dragover', e => {
+        if (!draggedNoteId && !draggedFolderId) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        const rect = headerLi.getBoundingClientRect();
+        const relY = (e.clientY - rect.top) / rect.height;
+        headerLi.classList.remove('drag-over', 'drop-above', 'drop-below');
+        if (draggedNoteId) {
+          headerLi.classList.add('drag-over');
+        } else if (draggedFolderId && draggedFolderId !== folderId) {
+          if (relY < 0.3) headerLi.classList.add('drop-above');
+          else if (relY > 0.7) headerLi.classList.add('drop-below');
+          else if (canMoveFolderInto(draggedFolderId, folderId)) headerLi.classList.add('drag-over');
+        }
+      });
+      headerLi.addEventListener('dragleave', e => {
+        if (!headerLi.contains(e.relatedTarget)) {
+          headerLi.classList.remove('drag-over', 'drop-above', 'drop-below');
+        }
+      });
+      headerLi.addEventListener('drop', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        const above = headerLi.classList.contains('drop-above');
+        const below = headerLi.classList.contains('drop-below');
+        headerLi.classList.remove('drag-over', 'drop-above', 'drop-below');
+        if (draggedNoteId) {
+          moveNoteToFolder(draggedNoteId, folderId);
+        } else if (draggedFolderId && draggedFolderId !== folderId) {
+          if (above) reorderFolderBy(draggedFolderId, folderId, 'above');
+          else if (below) reorderFolderBy(draggedFolderId, folderId, 'below');
+          else moveFolderIntoFolder(draggedFolderId, folderId);
+        }
+      });
+
+      notesList.appendChild(headerLi);
+
+      if (!isCollapsed) {
+        childFolders.forEach(cf => renderFolderSection(cf.id, depth + 1, isSearching, matched));
+        folderNotes.forEach(note => {
+          const li = createNoteItem(note);
+          li.style.paddingLeft = (10 + indent + 12) + 'px';
+          notesList.appendChild(li);
+        });
+      }
+    }
+
+    function renderNotesList(filter = '') {
+      notesList.innerHTML = '';
+      const isSearching = filter.trim().length > 0;
+
+      const matched = isSearching
+        ? notes.filter(n =>
+            n.title.toLowerCase().includes(filter.toLowerCase()) ||
+            stripHtml(n.content).toLowerCase().includes(filter.toLowerCase())
+          )
+        : notes;
+
+      // Render root folders (and their subtrees) recursively
+      folders.filter(f => !f.parentId).forEach(folder => {
+        renderFolderSection(folder.id, 0, isSearching, matched);
+      });
+
+      // Unfiled notes
+      const unfiled = matched.filter(n => !n.folder || !folders.find(f => f.id === n.folder));
+      if (folders.length > 0) {
+        const separatorLi = document.createElement('li');
+        separatorLi.className = 'section-separator';
+        notesList.appendChild(separatorLi);
+
+        const unfiledLi = document.createElement('li');
+        unfiledLi.className = 'unfiled-header sora-small';
+        unfiledLi.textContent = 'Unfiled';
+
+        unfiledLi.addEventListener('dragover', e => {
+          if (!draggedNoteId && !draggedFolderId) return;
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          unfiledLi.classList.add('drag-over');
+        });
+        unfiledLi.addEventListener('dragleave', e => {
+          if (!unfiledLi.contains(e.relatedTarget)) unfiledLi.classList.remove('drag-over');
+        });
+        unfiledLi.addEventListener('drop', e => {
+          e.preventDefault();
+          unfiledLi.classList.remove('drag-over');
+          if (draggedNoteId) moveNoteToFolder(draggedNoteId, null);
+          else if (draggedFolderId) {
+            const f = folders.find(x => x.id === draggedFolderId);
+            if (f) { f.parentId = null; saveFolders(); renderNotesList(searchNotes.value); }
+          }
+        });
+
+        notesList.appendChild(unfiledLi);
+      }
+      unfiled.forEach(note => notesList.appendChild(createNoteItem(note)));
+    }
+
+    // ── Note operations ──────────────────────────────────────────────────────
+
+    function loadNote(noteId) {
+      const note = notes.find(n => n.id === noteId);
+      if (!note) return;
       currentNoteId = noteId;
       editor.innerHTML = note.content;
       renderNotesList(searchNotes.value);
@@ -466,128 +986,136 @@
       editor.focus();
     }
 
-    // Save current note
     function saveCurrentNote() {
       if (!currentNoteId) return;
-
       const noteIndex = notes.findIndex(n => n.id === currentNoteId);
       if (noteIndex === -1) return;
 
-      // Update note content and title (first line as title)
       const content = editor.innerHTML;
       const firstLine = editor.innerText.split('\n')[0] || "Untitled Note";
       const title = firstLine.length > 30 ? firstLine.substring(0, 30) + '...' : firstLine;
 
-      notes[noteIndex] = {
-        ...notes[noteIndex],
-        title,
-        content,
-        updatedAt: new Date().toISOString()
-      };
-
+      notes[noteIndex] = { ...notes[noteIndex], title, content, updatedAt: new Date().toISOString() };
       saveNotes();
       renderNotesList(searchNotes.value);
     }
 
-    // Auto-save current note every 2 seconds
-    setInterval(() => {
-      saveCurrentNote();
-      updateWordCount();
-    }, 2000);
+    function deleteNote(noteId) {
+      const noteIndex = notes.findIndex(n => n.id === noteId);
+      if (noteIndex === -1) return;
 
-    // Update word count
+      notes.splice(noteIndex, 1);
+      saveNotes();
+
+      if (currentNoteId === noteId) {
+        if (notes.length > 0) {
+          loadNote(notes[Math.min(noteIndex, notes.length - 1)].id);
+        } else {
+          currentNoteId = null;
+          editor.innerHTML = '';
+          createNewNote();
+        }
+      } else {
+        renderNotesList(searchNotes.value);
+      }
+    }
+
+    // ── Utilities ────────────────────────────────────────────────────────────
+
+    function stripHtml(html) {
+      const div = document.createElement('div');
+      div.innerHTML = html;
+      return div.textContent || div.innerText || '';
+    }
+
     function updateWordCount() {
       const text = editor.innerText || "";
       const wordCount = text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
       const charCount = text.length;
-
       document.querySelector(".word-count").textContent = `Words: ${wordCount} | Characters: ${charCount}`;
     }
 
-    // Event listeners
+    function showNotification(message) {
+      const notification = document.createElement('div');
+      notification.style.position = 'fixed';
+      notification.style.bottom = '60px';
+      notification.style.right = '20px';
+      notification.style.backgroundColor = isDarkMode() ? '#333' : 'white';
+      notification.style.color = isDarkMode() ? '#e0e0e0' : 'black';
+      notification.style.padding = '10px 15px';
+      notification.style.borderRadius = '4px';
+      notification.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+      notification.style.zIndex = '200';
+      notification.style.transition = 'opacity 0.3s ease-out';
+      notification.textContent = message;
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => document.body.removeChild(notification), 300);
+      }, 2000);
+    }
+
+    // Auto-save every 2 seconds
+    setInterval(() => { saveCurrentNote(); updateWordCount(); }, 2000);
+
+    // ── Event listeners ──────────────────────────────────────────────────────
+
     editor.addEventListener("input", updateWordCount);
     newNoteBtn.addEventListener("click", createNewNote);
+    newFolderBtn.addEventListener("click", promptCreateFolder);
     shareBtn.addEventListener("click", shareNotes);
-
-    searchNotes.addEventListener("input", () => {
-      renderNotesList(searchNotes.value);
-    });
+    searchNotes.addEventListener("input", () => renderNotesList(searchNotes.value));
 
     editor.addEventListener('keydown', function (e) {
-      // Tab key - insert 4 spaces
       if (e.key === 'Tab') {
         e.preventDefault();
-        insertSpaces(4);
+        const selection = window.getSelection();
+        if (selection.rangeCount) {
+          const range = selection.getRangeAt(0);
+          const lineText = getCurrentLineText(range.startContainer, range.startOffset);
+          if (lineText.trimStart().startsWith('- ') || lineText.trim() === '-') {
+            handleListIndent(e.shiftKey);
+            return;
+          }
+        }
+        if (!e.shiftKey) insertSpaces(4);
         return;
       }
 
-      // Backspace - handle tab removal
       if (e.key === 'Backspace') {
-        if (handleBackspace()) {
-          e.preventDefault();
-        }
+        if (handleBackspace()) e.preventDefault();
         return;
       }
 
-      // Enter key - handle list continuation
       if (e.key === 'Enter') {
-        if (handleEnter()) {
-          e.preventDefault();
-        }
+        if (handleEnter()) e.preventDefault();
         return;
       }
 
-      // Keyboard shortcuts
       if (e.ctrlKey || e.metaKey) {
         switch (e.key) {
-          case 'b': // Bold
-            e.preventDefault();
-            document.execCommand('bold');
-            break;
-
-          case 'i': // Italic
-            e.preventDefault();
-            document.execCommand('italic');
-            break;
-            
-          case 'u': // Underline
-            e.preventDefault();
-            document.execCommand('underline');
-            break;
-
-          case 'k': // Code
-            e.preventDefault();
-            handleCodeBlock();
-            break;
-
-          case 'l': // List
-            e.preventDefault();
-            handleList();
-            break;
-
-          case 's': // Save
-            e.preventDefault();
-            saveCurrentNote();
-            showNotification("Note saved successfully");
-            break;
-
-          case 'n': // New note
-            e.preventDefault();
-            createNewNote();
-            break;
+          case '1': e.preventDefault(); handleHeading('h1'); break;
+          case '2': e.preventDefault(); handleHeading('h2'); break;
+          case 'b': e.preventDefault(); document.execCommand('bold'); break;
+          case 'i': e.preventDefault(); document.execCommand('italic'); break;
+          case 'u': e.preventDefault(); document.execCommand('underline'); break;
+          case 'k': e.preventDefault(); handleCodeBlock(); break;
+          case 'l': e.preventDefault(); handleList(); break;
+          case 's': e.preventDefault(); saveCurrentNote(); showNotification("Note saved successfully"); break;
+          case 'n': e.preventDefault(); createNewNote(); break;
         }
       }
     });
+
+    // ── Editor helpers ───────────────────────────────────────────────────────
 
     function insertSpaces(count) {
       const selection = window.getSelection();
       if (!selection.rangeCount) return;
-
       const range = selection.getRangeAt(0);
       range.deleteContents();
       range.insertNode(document.createTextNode(' '.repeat(count)));
-
-      // Move cursor after the spaces
       range.setStart(range.endContainer, range.endOffset);
       range.collapse(true);
       selection.removeAllRanges();
@@ -597,16 +1125,12 @@
     function handleBackspace() {
       const selection = window.getSelection();
       if (!selection.rangeCount) return false;
-
       const range = selection.getRangeAt(0);
       const node = range.startContainer;
       const offset = range.startOffset;
-
-      // Check for tab removal (4 spaces)
       if (offset >= 4 && node.nodeType === Node.TEXT_NODE) {
         const textBefore = node.textContent.substring(offset - 4, offset);
         if (textBefore === '    ') {
-          // Delete the 4 spaces
           const newRange = document.createRange();
           newRange.setStart(node, offset - 4);
           newRange.setEnd(node, offset);
@@ -616,26 +1140,60 @@
           return true;
         }
       }
-
       return false;
+    }
+
+    function handleListIndent(dedent) {
+      const selection = window.getSelection();
+      if (!selection.rangeCount) return;
+      const range = selection.getRangeAt(0);
+      const node = range.startContainer;
+      const offset = range.startOffset;
+      if (node.nodeType !== Node.TEXT_NODE) return;
+      const lineStartPos = getLineStartPosition(node, offset);
+      const lineStartOffset = lineStartPos.offset;
+      const lineText = getCurrentLineText(node, offset);
+      const currentIndent = lineText.match(/^(\s*)/)[1];
+
+      if (dedent) {
+        if (currentIndent.length >= 2) {
+          const delRange = document.createRange();
+          delRange.setStart(node, lineStartOffset);
+          delRange.setEnd(node, lineStartOffset + 2);
+          selection.removeAllRanges();
+          selection.addRange(delRange);
+          document.execCommand('delete');
+          const newRange = document.createRange();
+          newRange.setStart(node, Math.max(lineStartOffset, offset - 2));
+          newRange.collapse(true);
+          selection.removeAllRanges();
+          selection.addRange(newRange);
+        }
+      } else {
+        const insRange = document.createRange();
+        insRange.setStart(node, lineStartOffset);
+        insRange.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(insRange);
+        document.execCommand('insertText', false, '  ');
+        const newRange = document.createRange();
+        newRange.setStart(node, offset + 2);
+        newRange.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(newRange);
+      }
     }
 
     function handleEnter() {
       const selection = window.getSelection();
       if (!selection.rangeCount) return false;
-
       const range = selection.getRangeAt(0);
       const node = range.startContainer;
       const offset = range.startOffset;
-
-      // Get current line text
       const lineText = getCurrentLineText(node, offset);
 
-      // Check if we're in a list line (starts with '- ' or just '-')
       if (lineText.trim().startsWith('- ') || lineText.trim() === '-') {
-        // If the line only has the bullet or the bullet with empty content, remove it on enter
         if (lineText.trim() === '- ' || lineText.trim() === '-') {
-          // Delete the bullet
           const lineStartPos = getLineStartPosition(node, offset);
           const newRange = document.createRange();
           newRange.setStart(lineStartPos.node, lineStartPos.offset);
@@ -646,11 +1204,7 @@
           document.execCommand('insertText', false, '\n');
           return true;
         }
-
-        // Get the indentation
         const indentation = lineText.match(/^\s*/)[0];
-
-        // Insert new list item with same indentation
         document.execCommand('insertText', false, '\n' + indentation + '- ');
         return true;
       }
@@ -660,42 +1214,31 @@
 
     function getCurrentLineText(node, offset) {
       if (node.nodeType !== Node.TEXT_NODE) return '';
-
       const text = node.textContent;
       let lineStart = offset;
       while (lineStart > 0 && text[lineStart - 1] !== '\n') lineStart--;
-
       let lineEnd = offset;
       while (lineEnd < text.length && text[lineEnd] !== '\n') lineEnd++;
-
       return text.substring(lineStart, lineEnd);
     }
 
     function getLineStartPosition(node, offset) {
-      if (node.nodeType !== Node.TEXT_NODE) return {node, offset: 0};
-
+      if (node.nodeType !== Node.TEXT_NODE) return { node, offset: 0 };
       const text = node.textContent;
       let lineStart = offset;
       while (lineStart > 0 && text[lineStart - 1] !== '\n') lineStart--;
-
-      return {node, offset: lineStart};
+      return { node, offset: lineStart };
     }
 
     function handleCodeBlock() {
       const selection = window.getSelection();
       if (!selection.rangeCount) return;
-
       const range = selection.getRangeAt(0);
       const selectedText = range.toString();
-
       if (selectedText) {
-        // If text is selected, wrap it in code tags
         document.execCommand('insertHTML', false, `<code>${selectedText}</code>`);
       } else {
-        // If no text is selected, insert empty code tags and place cursor inside
         document.execCommand('insertHTML', false, '<code></code>');
-
-        // Move cursor inside code tags
         const codes = document.getElementsByTagName('code');
         if (codes.length > 0) {
           const lastCode = codes[codes.length - 1];
@@ -708,43 +1251,39 @@
       }
     }
 
+    function handleHeading(tag) {
+      const selection = window.getSelection();
+      if (!selection.rangeCount) return;
+      const anchorNode = selection.anchorNode;
+      const block = anchorNode.nodeType === Node.TEXT_NODE
+        ? anchorNode.parentElement.closest('h1, h2, h3, h4, h5, h6, p, div')
+        : anchorNode.closest('h1, h2, h3, h4, h5, h6, p, div');
+      if (block && block.tagName.toLowerCase() === tag) {
+        document.execCommand('formatBlock', false, 'p');
+      } else {
+        document.execCommand('formatBlock', false, tag);
+      }
+    }
+
     function handleList() {
       const selection = window.getSelection();
       if (!selection.rangeCount) return;
-
-      // Insert a list item at the current position
       document.execCommand('insertText', false, '- ');
     }
 
-    // Button event listeners
-    document.getElementById('btn-bold').addEventListener('click', () => {
-      document.execCommand('bold');
-      editor.focus();
-    });
+    // ── Toolbar buttons ──────────────────────────────────────────────────────
 
-    document.getElementById('btn-italic').addEventListener('click', () => {
-      document.execCommand('italic');
-      editor.focus();
-    });
-    
-    document.getElementById('btn-underline').addEventListener('click', () => {
-      document.execCommand('underline');
-      editor.focus();
-    });
-
-    document.getElementById('btn-code').addEventListener('click', () => {
-      handleCodeBlock();
-      editor.focus();
-    });
-
-    document.getElementById('btn-list').addEventListener('click', () => {
-      handleList();
-      editor.focus();
-    });
+    document.getElementById('btn-h1').addEventListener('click', () => { handleHeading('h1'); editor.focus(); });
+    document.getElementById('btn-h2').addEventListener('click', () => { handleHeading('h2'); editor.focus(); });
+    document.getElementById('btn-bold').addEventListener('click', () => { document.execCommand('bold'); editor.focus(); });
+    document.getElementById('btn-italic').addEventListener('click', () => { document.execCommand('italic'); editor.focus(); });
+    document.getElementById('btn-underline').addEventListener('click', () => { document.execCommand('underline'); editor.focus(); });
+    document.getElementById('btn-code').addEventListener('click', () => { handleCodeBlock(); editor.focus(); });
+    document.getElementById('btn-list').addEventListener('click', () => { handleList(); editor.focus(); });
 
     document.getElementById('btn-export').addEventListener('click', () => {
       const text = editor.innerText;
-      const blob = new Blob([text], {type: 'text/plain'});
+      const blob = new Blob([text], { type: 'text/plain' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       const currentNote = notes.find(n => n.id === currentNoteId);
@@ -759,67 +1298,118 @@
       editor.focus();
     });
 
-    // Highlight text
+    const HIGHLIGHT_CLASSES = ['highlight-yellow', 'highlight-green', 'highlight-blue', 'highlight-red'];
+
+    function removeHighlights(range) {
+      const selector = HIGHLIGHT_CLASSES.map(c => `span.${c}`).join(',');
+      const spans = [...editor.querySelectorAll(selector)].filter(s => range.intersectsNode(s));
+
+      for (const span of spans) {
+        const spanRange = document.createRange();
+        spanRange.selectNodeContents(span);
+
+        const startsInside = range.compareBoundaryPoints(Range.START_TO_START, spanRange) > 0;
+        const endsInside   = range.compareBoundaryPoints(Range.END_TO_END,   spanRange) < 0;
+
+        if (!startsInside && !endsInside) {
+          while (span.firstChild) span.parentNode.insertBefore(span.firstChild, span);
+          span.remove();
+        } else if (startsInside && endsInside) {
+          const tailSpan = span.cloneNode(false);
+          span.parentNode.insertBefore(tailSpan, span.nextSibling);
+          const afterRange = document.createRange();
+          afterRange.setStart(range.endContainer, range.endOffset);
+          afterRange.setEnd(spanRange.endContainer, spanRange.endOffset);
+          tailSpan.appendChild(afterRange.extractContents());
+          const curSpanRange = document.createRange();
+          curSpanRange.selectNodeContents(span);
+          const midRange = document.createRange();
+          midRange.setStart(range.startContainer, range.startOffset);
+          midRange.setEnd(curSpanRange.endContainer, curSpanRange.endOffset);
+          span.parentNode.insertBefore(midRange.extractContents(), tailSpan);
+          if (!span.textContent) span.remove();
+          if (!tailSpan.textContent) tailSpan.remove();
+        } else if (startsInside) {
+          const selRange = document.createRange();
+          selRange.setStart(range.startContainer, range.startOffset);
+          selRange.setEnd(spanRange.endContainer, spanRange.endOffset);
+          span.parentNode.insertBefore(selRange.extractContents(), span.nextSibling);
+          if (!span.textContent) span.remove();
+        } else {
+          const selRange = document.createRange();
+          selRange.setStart(spanRange.startContainer, spanRange.startOffset);
+          selRange.setEnd(range.endContainer, range.endOffset);
+          span.parentNode.insertBefore(selRange.extractContents(), span);
+          if (!span.textContent) span.remove();
+        }
+      }
+
+      editor.normalize();
+    }
+
+    let savedHighlightRange = null;
+    document.getElementById('highlight-select').addEventListener('mousedown', () => {
+      const sel = window.getSelection();
+      if (sel.rangeCount) savedHighlightRange = sel.getRangeAt(0).cloneRange();
+    });
+
     document.getElementById('highlight-select').addEventListener('change', (e) => {
       const value = e.target.value;
       if (!value) return;
 
       const selection = window.getSelection();
-      if (!selection.rangeCount) return;
+      if (savedHighlightRange) {
+        selection.removeAllRanges();
+        selection.addRange(savedHighlightRange);
+        savedHighlightRange = null;
+      }
+
+      if (!selection.rangeCount || selection.isCollapsed) { e.target.value = ''; return; }
 
       const range = selection.getRangeAt(0);
 
       if (value === 'remove') {
-        // Remove all highlight classes
-        document.execCommand('removeFormat');
+        removeHighlights(range);
       } else {
-        // Save the selection
-        const selectedText = range.toString();
+        const startMarker = document.createElement('span');
+        const endMarker   = document.createElement('span');
 
-        if (selectedText) {
-          // Create a span with the highlight class
+        const endClone = range.cloneRange();
+        endClone.collapse(false);
+        endClone.insertNode(endMarker);
+
+        const startClone = range.cloneRange();
+        startClone.collapse(true);
+        startClone.insertNode(startMarker);
+
+        const markedRange = document.createRange();
+        markedRange.setStartAfter(startMarker);
+        markedRange.setEndBefore(endMarker);
+
+        removeHighlights(markedRange);
+
+        const newRange = document.createRange();
+        newRange.setStartAfter(startMarker);
+        newRange.setEndBefore(endMarker);
+
+        if (!newRange.collapsed) {
           const span = document.createElement('span');
           span.className = value;
-          span.textContent = selectedText;
-
-          // Replace the selection with the span
-          range.deleteContents();
-          range.insertNode(span);
+          span.appendChild(newRange.extractContents());
+          newRange.insertNode(span);
         }
+
+        startMarker.parentNode?.removeChild(startMarker);
+        endMarker.parentNode?.removeChild(endMarker);
       }
 
-      // Reset the select
+      editor.normalize();
       e.target.value = '';
       editor.focus();
     });
 
-    // Notification function
-    function showNotification(message) {
-      const notification = document.createElement('div');
-      notification.style.position = 'fixed';
-      notification.style.bottom = '60px';
-      notification.style.right = '20px';
-      notification.style.backgroundColor = isDarkMode() ? '#333' : 'white';
-      notification.style.color = isDarkMode() ? '#e0e0e0' : 'black';
-      notification.style.padding = '10px 15px';
-      notification.style.borderRadius = '4px';
-      notification.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
-      notification.style.zIndex = '200';
-      notification.style.transition = 'opacity 0.3s ease-out';
-      notification.textContent = message;
+    // ── Init ─────────────────────────────────────────────────────────────────
 
-      document.body.appendChild(notification);
-
-      // Remove after 2 seconds
-      setTimeout(() => {
-        notification.style.opacity = '0';
-        setTimeout(() => {
-          document.body.removeChild(notification);
-        }, 300);
-      }, 2000);
-    }
-
-    // Initialize the app
     loadData();
   </script>
 </body>
